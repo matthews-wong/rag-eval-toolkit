@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rag-eval-toolkit"
+version = "0.1.0"
+description = "Offline toolkit to evaluate Retrieval-Augmented Generation pipelines (retrieval metrics + answer-quality heuristics)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Matthews Wong" }]
+keywords = ["rag", "evaluation", "retrieval", "metrics", "ndcg", "mrr", "tf-idf"]
+dependencies = [
+    "scikit-learn>=1.3",
+    "numpy>=1.24",
+    "click>=8.1",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+rag-eval = "rageval.cli:main"
+
+[tool.setuptools]
+packages = ["rageval"]
+
+[tool.setuptools.package-data]
+rageval = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

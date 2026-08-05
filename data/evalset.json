@@ -1,0 +1,80 @@
+[
+  {
+    "id": "q1",
+    "question": "What is a VPC and how is it isolated in AWS?",
+    "relevant_ids": ["vpc"],
+    "reference_answer": "A VPC is a logically isolated virtual network in AWS where you launch resources into subnets you define."
+  },
+  {
+    "id": "q2",
+    "question": "How does Amazon S3 store data?",
+    "relevant_ids": ["s3"],
+    "reference_answer": "Amazon S3 is an object storage service that stores data as objects inside buckets with high durability."
+  },
+  {
+    "id": "q3",
+    "question": "What is AWS Lambda serverless compute and how is it billed?",
+    "relevant_ids": ["lambda"],
+    "reference_answer": "AWS Lambda is a serverless compute service that runs function code in response to events, and you are billed only for the compute time consumed."
+  },
+  {
+    "id": "q4",
+    "question": "How does IAM control access to AWS resources?",
+    "relevant_ids": ["iam"],
+    "reference_answer": "IAM controls who is authenticated and authorized to use AWS resources through policies attached to users, groups, and roles."
+  },
+  {
+    "id": "q5",
+    "question": "What are EC2 instances and what pricing options exist?",
+    "relevant_ids": ["ec2"],
+    "reference_answer": "Amazon EC2 provides resizable virtual server instances with pricing options including On-Demand, Reserved, and Spot Instances."
+  },
+  {
+    "id": "q6",
+    "question": "How does Amazon RDS provide high availability for relational databases?",
+    "relevant_ids": ["rds"],
+    "reference_answer": "Amazon RDS is a managed relational database service that uses Multi-AZ deployments to replicate data to a standby for failover."
+  },
+  {
+    "id": "q7",
+    "question": "What does CloudWatch monitor and how do alarms work?",
+    "relevant_ids": ["cloudwatch"],
+    "reference_answer": "Amazon CloudWatch is a monitoring service that collects metrics and logs and lets you set alarms that trigger on metric thresholds."
+  },
+  {
+    "id": "q8",
+    "question": "What kind of database is DynamoDB and what latency does it offer?",
+    "relevant_ids": ["dynamodb"],
+    "reference_answer": "Amazon DynamoDB is a fully managed NoSQL key-value and document database with single-digit millisecond latency at any scale."
+  },
+  {
+    "id": "q9",
+    "question": "Which AWS services can trigger a Lambda function and how does it scale?",
+    "relevant_ids": ["lambda"],
+    "reference_answer": "Lambda scales automatically with incoming events and integrates with triggers such as API Gateway, S3, and DynamoDB streams."
+  },
+  {
+    "id": "q10",
+    "question": "How do subnets and gateways route traffic inside a VPC?",
+    "relevant_ids": ["vpc"],
+    "reference_answer": "Public subnets route to an internet gateway while private subnets reach the internet through a NAT gateway, with route tables controlling traffic."
+  },
+  {
+    "id": "q11",
+    "question": "Which AWS services scale automatically with demand or events?",
+    "relevant_ids": ["lambda", "dynamodb"],
+    "reference_answer": "AWS Lambda scales automatically with the number of incoming events, and DynamoDB delivers single-digit millisecond latency at any scale, so both scale automatically with demand."
+  },
+  {
+    "id": "q12",
+    "question": "Which services durably store or replicate data so it survives failures?",
+    "relevant_ids": ["s3", "rds"],
+    "reference_answer": "Amazon S3 stores objects with high durability and Amazon RDS uses Multi-AZ replication to a standby for failover, keeping data available through failures."
+  },
+  {
+    "id": "q13",
+    "question": "What fully managed database options does AWS offer for storing application data?",
+    "relevant_ids": ["rds", "dynamodb"],
+    "reference_answer": "Amazon RDS is a managed relational database service and Amazon DynamoDB is a fully managed NoSQL database, giving two managed options for storing application data."
+  }
+]
