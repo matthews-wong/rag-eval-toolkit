@@ -43,6 +43,37 @@ def recall_at_k(retrieved: Sequence[str], relevant: Iterable[str], k: int) -> fl
     return found / len(relevant_set)
 
 
+def precision_at_k(retrieved: Sequence[str], relevant: Iterable[str], k: int) -> float:
+    """Fraction of the top-k slots occupied by a (distinct) relevant doc.
+
+    Precision@k divides the number of distinct relevant docs found in the top-k
+    by the window size ``k`` -- it answers "how much of what the answerer sees
+    is actually useful?". Duplicate ids in ``retrieved`` are collapsed, and the
+    denominator is always ``k`` (a short retrieval that leaves slots empty is
+    penalized, which is the standard convention). Returns 0.0 when there are no
+    relevant docs.
+    """
+    relevant_set = set(relevant)
+    if not relevant_set:
+        return 0.0
+    found = sum(1 for doc in set(_top_k(retrieved, k)) if doc in relevant_set)
+    return found / k
+
+
+def f1_at_k(retrieved: Sequence[str], relevant: Iterable[str], k: int) -> float:
+    """Harmonic mean of :func:`precision_at_k` and :func:`recall_at_k`.
+
+    Balances "is the top-k mostly relevant?" (precision) against "did we find
+    most of the relevant docs?" (recall). Returns 0.0 when both are 0 (i.e. no
+    relevant doc was retrieved), avoiding a divide-by-zero.
+    """
+    precision = precision_at_k(retrieved, relevant, k)
+    recall = recall_at_k(retrieved, relevant, k)
+    if precision + recall == 0.0:
+        return 0.0
+    return 2 * precision * recall / (precision + recall)
+
+
 def mrr(retrieved: Sequence[str], relevant: Iterable[str], k: int | None = None) -> float:
     """Reciprocal rank of the first relevant doc (1/rank), else 0.0.
 

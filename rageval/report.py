@@ -15,7 +15,9 @@ from .harness import EvalReport
 # Human-readable labels for the aggregate metric keys, in display order.
 _METRIC_LABELS: list[tuple[str, str]] = [
     ("hit_rate", "Hit-rate@k"),
+    ("precision_at_k", "Precision@k"),
     ("recall_at_k", "Recall@k"),
+    ("f1_at_k", "F1@k"),
     ("mrr", "MRR"),
     ("ndcg", "nDCG@k"),
     ("answer_f1", "Answer F1 (ROUGE-lite)"),

@@ -69,7 +69,9 @@ class QueryResult:
     relevant_ids: list[str]
     answer: str
     hit_rate: float
+    precision_at_k: float
     recall_at_k: float
+    f1_at_k: float
     mrr: float
     ndcg: float
     answer_f1: float
@@ -112,7 +114,9 @@ def evaluate(
                 relevant_ids=example.relevant_ids,
                 answer=answer,
                 hit_rate=metrics.hit_rate(retrieved, example.relevant_ids, k),
+                precision_at_k=metrics.precision_at_k(retrieved, example.relevant_ids, k),
                 recall_at_k=metrics.recall_at_k(retrieved, example.relevant_ids, k),
+                f1_at_k=metrics.f1_at_k(retrieved, example.relevant_ids, k),
                 mrr=metrics.mrr(retrieved, example.relevant_ids, k),
                 ndcg=metrics.ndcg(retrieved, example.relevant_ids, k),
                 answer_f1=answer_metrics.overlap_f1(answer, example.reference_answer),
@@ -123,7 +127,9 @@ def evaluate(
 
     aggregate = {
         "hit_rate": mean(r.hit_rate for r in per_query),
+        "precision_at_k": mean(r.precision_at_k for r in per_query),
         "recall_at_k": mean(r.recall_at_k for r in per_query),
+        "f1_at_k": mean(r.f1_at_k for r in per_query),
         "mrr": mean(r.mrr for r in per_query),
         "ndcg": mean(r.ndcg for r in per_query),
         "answer_f1": mean(r.answer_f1 for r in per_query),

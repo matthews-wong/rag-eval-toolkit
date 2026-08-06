@@ -36,7 +36,9 @@ flowchart LR
 | Metric | What it measures |
 | --- | --- |
 | Hit-rate@k | Did *any* relevant doc appear in the top-k? (success@k) |
+| Precision@k | Fraction of the top-k slots occupied by a relevant doc |
 | Recall@k | Fraction of all relevant docs found within the top-k |
+| F1@k | Harmonic mean of precision@k and recall@k |
 | MRR | Reciprocal rank of the first relevant doc — rewards ranking it high |
 | nDCG@k | Rank-discounted gain vs. the ideal ordering, normalized to [0, 1] |
 | Answer F1 (ROUGE-lite) | Unigram token-overlap F1 between the answer and the reference (lexical only) |
@@ -79,7 +81,9 @@ Running `rag-eval --markdown` on the bundled 13-question eval set and 8-doc corp
 | Metric | Score |
 | --- | --- |
 | Hit-rate@k | 1.000 |
+| Precision@k | 0.385 |
 | Recall@k | 0.962 |
+| F1@k | 0.538 |
 | MRR | 0.962 |
 | nDCG@k | 0.947 |
 | Answer F1 (ROUGE-lite) | 0.137 |
@@ -101,7 +105,7 @@ Running `rag-eval --markdown` on the bundled 13-question eval set and 8-doc corp
 | q12 | 1 | 0.50 | 0.50 | 0.39 | 0.07 | 1.00 |
 | q13 | 1 | 1.00 | 1.00 | 1.00 | 0.14 | 1.00 |
 
-**Reading the results.** TF-IDF nails the single-topic questions (q1–q10), so hit-rate and MRR are perfect there. The multi-relevant questions expose real ranking limits: **q12** ("which services durably store or replicate data") is the hard case — the retriever ranks DynamoDB above the truly relevant S3 and pushes S3 out of the top-3, so recall and MRR drop to 0.50 and nDCG to 0.39. The low Answer F1 (~0.14) is expected and honest: the demo answerer extracts a single sentence, so it overlaps only partially with the fuller reference answers — F1 is a *lexical* measure, not a correctness verdict. Grounding is 1.0 because the demo answerer only ever cites the doc it retrieved; the grounding *check* itself is exercised against ungrounded citations in the test suite.
+**Reading the results.** TF-IDF nails the single-topic questions (q1–q10), so hit-rate and MRR are perfect there. The multi-relevant questions expose real ranking limits: **q12** ("which services durably store or replicate data") is the hard case — the retriever ranks DynamoDB above the truly relevant S3 and pushes S3 out of the top-3, so recall and MRR drop to 0.50 and nDCG to 0.39. **Precision@k (0.385)** looks low by design: most questions have a single relevant doc, so filling a `k=3` window caps precision at 0.33 for those queries no matter how good the ranking is — precision@k rewards tight, relevant top-k lists, which a single-answer eval set structurally cannot produce. **F1@k (0.538)** is the harmonic mean of that precision and the strong recall. The low Answer F1 (~0.14) is expected and honest: the demo answerer extracts a single sentence, so it overlaps only partially with the fuller reference answers — F1 is a *lexical* measure, not a correctness verdict. Grounding is 1.0 because the demo answerer only ever cites the doc it retrieved; the grounding *check* itself is exercised against ungrounded citations in the test suite.
 
 ## Project structure
 
@@ -109,7 +113,7 @@ Running `rag-eval --markdown` on the bundled 13-question eval set and 8-doc corp
 rag-eval-toolkit/
 ├── rageval/
 │   ├── __init__.py
-│   ├── metrics.py          # pure retrieval metrics: hit_rate, recall_at_k, mrr, ndcg
+│   ├── metrics.py          # pure retrieval metrics: hit_rate, precision_at_k, recall_at_k, f1_at_k, mrr, ndcg
 │   ├── answer_metrics.py   # ROUGE-lite F1 + citation grounding check
 │   ├── retriever.py        # Retriever protocol + TF-IDF demo retriever
 │   ├── harness.py          # runs retriever+answerer over the eval set, collects scores
@@ -134,7 +138,7 @@ pip install -e ".[dev]"
 pytest
 ```
 
-The suite (29 tests, fully offline) covers: metric math against hand-computed values (MRR/nDCG known cases), the grounding check flagging ungrounded citations, ROUGE-lite F1 edge cases, and an end-to-end harness run over the bundled sample data (including determinism). CI runs the same suite on GitHub Actions.
+The suite (38 tests, fully offline) covers: metric math against hand-computed values (precision@k/F1@k/MRR/nDCG known cases), the grounding check flagging ungrounded citations, ROUGE-lite F1 edge cases, and an end-to-end harness run over the bundled sample data (including determinism). CI runs the same suite on GitHub Actions.
 
 ## Roadmap
 

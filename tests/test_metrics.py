@@ -37,6 +37,54 @@ def test_recall_no_relevant_is_zero():
     assert metrics.recall_at_k(["a"], set(), k=1) == 0.0
 
 
+# --- precision_at_k --------------------------------------------------------
+
+def test_precision_perfect():
+    # Both top-2 slots hold a relevant doc.
+    assert metrics.precision_at_k(["a", "b"], {"a", "b"}, k=2) == 1.0
+
+
+def test_precision_partial():
+    # 2 relevant of 3 slots.
+    assert metrics.precision_at_k(["a", "b", "x"], {"a", "b", "c"}, k=3) == pytest.approx(2 / 3)
+
+
+def test_precision_penalizes_empty_slots():
+    # Only 2 docs retrieved but k=3: denominator stays k, so 1 relevant / 3.
+    assert metrics.precision_at_k(["a", "x"], {"a"}, k=3) == pytest.approx(1 / 3)
+
+
+def test_precision_collapses_duplicates():
+    # Duplicate 'a' counts once: 1 distinct relevant / 3 slots.
+    assert metrics.precision_at_k(["a", "a", "b"], {"a"}, k=3) == pytest.approx(1 / 3)
+
+
+def test_precision_no_relevant_is_zero():
+    assert metrics.precision_at_k(["a", "b"], set(), k=2) == 0.0
+
+
+# --- f1_at_k ---------------------------------------------------------------
+
+def test_f1_perfect():
+    # precision = recall = 1 -> F1 = 1.
+    assert metrics.f1_at_k(["a", "b"], {"a", "b"}, k=2) == 1.0
+
+
+def test_f1_known_value_single_relevant_at_rank_two():
+    # precision = 1/3, recall = 1/1 = 1 -> F1 = 2*(1/3)*1 / (1/3 + 1) = 0.5.
+    assert metrics.f1_at_k(["x", "a", "y"], {"a"}, k=3) == pytest.approx(0.5)
+
+
+def test_f1_balanced_precision_and_recall():
+    # 2 relevant found of 3 retrieved and 3 relevant: P = R = 2/3 -> F1 = 2/3.
+    assert metrics.f1_at_k(["a", "b", "x"], {"a", "b", "c"}, k=3) == pytest.approx(2 / 3)
+
+
+def test_f1_no_relevant_retrieved_is_zero():
+    # Nothing relevant retrieved -> P = R = 0 -> F1 = 0 (no divide-by-zero).
+    assert metrics.f1_at_k(["x", "y"], {"a"}, k=2) == 0.0
+
+
 # --- mrr -------------------------------------------------------------------
 
 def test_mrr_first_relevant_at_rank_two():
