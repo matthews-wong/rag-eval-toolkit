@@ -138,7 +138,7 @@ pip install -e ".[dev]"
 pytest
 ```
 
-The suite (38 tests, fully offline) covers: metric math against hand-computed values (precision@k/F1@k/MRR/nDCG known cases), the grounding check flagging ungrounded citations, ROUGE-lite F1 edge cases, and an end-to-end harness run over the bundled sample data (including determinism). CI runs the same suite on GitHub Actions.
+The suite (40 tests, fully offline) covers: metric math against hand-computed values (precision@k/F1@k/MRR/nDCG known cases, including duplicate-id edge cases), the grounding check flagging ungrounded citations, ROUGE-lite F1 edge cases, and an end-to-end harness run over the bundled sample data (including determinism). CI runs the same suite on GitHub Actions.
 
 ## Roadmap
 

@@ -127,6 +127,19 @@ def test_ndcg_no_relevant_is_zero():
     assert metrics.ndcg(["a", "b"], set(), k=2) == 0.0
 
 
+def test_dcg_counts_duplicate_relevant_doc_once():
+    # A relevant doc repeated in the ranking must be credited only at its best
+    # (first) rank -- otherwise the same document inflates the gain twice.
+    # Only the occurrence at rank 1 counts: DCG = 1/log2(2) = 1.0.
+    assert metrics.dcg(["a", "a"], {"a"}, k=2) == pytest.approx(1.0)
+
+
+def test_ndcg_never_exceeds_one_with_duplicate_retrieved_ids():
+    # nDCG is documented to lie in [0, 1]. A retriever that returns the same
+    # relevant doc twice must not push the normalized score above 1.0.
+    assert metrics.ndcg(["a", "a"], {"a"}, k=2) == pytest.approx(1.0)
+
+
 # --- guards ----------------------------------------------------------------
 
 def test_non_positive_k_raises():

@@ -92,13 +92,20 @@ def dcg(retrieved: Sequence[str], relevant: Iterable[str], k: int) -> float:
     """Discounted cumulative gain over the top-k with binary gains.
 
     gain_i = 1 for a relevant doc, discounted by log2(rank + 1).
+
+    A relevant doc that appears more than once in the ranking is credited only
+    at its best (first) rank -- like :func:`precision_at_k` and
+    :func:`recall_at_k`, duplicate retrieved ids are collapsed. Counting a
+    repeat again would double its gain and let :func:`ndcg` exceed 1.0.
     """
     relevant_set = set(relevant)
-    return sum(
-        1.0 / math.log2(index + 2)
-        for index, doc in enumerate(_top_k(retrieved, k))
-        if doc in relevant_set
-    )
+    seen: set[str] = set()
+    total = 0.0
+    for index, doc in enumerate(_top_k(retrieved, k)):
+        if doc in relevant_set and doc not in seen:
+            seen.add(doc)
+            total += 1.0 / math.log2(index + 2)
+    return total
 
 
 def ndcg(retrieved: Sequence[str], relevant: Iterable[str], k: int) -> float:
